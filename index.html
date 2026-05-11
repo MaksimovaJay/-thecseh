@@ -1,0 +1,810 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TheЦех — postaralis</title>
+  <meta name="description" content="TheЦех — тёмный звук, живые эмоции. postaralis.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Space+Grotesk:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg:      #09060e;
+      --accent:  #b030b8;
+      --accent2: #7c22c8;
+      --glow:    rgba(176, 48, 184, 0.38);
+      --glow2:   rgba(124, 34, 200, 0.3);
+      --text:    #f0ece4;
+      --muted:   #55505e;
+      --glass:   rgba(255,255,255,0.03);
+      --gb:      rgba(255,255,255,0.07);
+      --gb2:     rgba(176,48,184,0.15);
+    }
+
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      background-color: var(--bg);
+      /* seamless dot-grid pattern */
+      background-image: radial-gradient(rgba(176,48,184,0.13) 1px, transparent 1px);
+      background-size: 28px 28px;
+      color: var(--text);
+      font-family: 'Space Grotesk', sans-serif;
+      overflow-x: hidden;
+    }
+
+    /* ─── GRAIN ─── */
+    #grain {
+      position: fixed; inset: 0;
+      pointer-events: none; z-index: 9000;
+      opacity: .04; mix-blend-mode: screen;
+    }
+
+    /* ─── NAV ─── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 800;
+      padding: 22px 48px;
+      display: flex; align-items: center; justify-content: space-between;
+      background: linear-gradient(to bottom, rgba(9,6,14,.9), transparent);
+      backdrop-filter: blur(0px);
+      transition: backdrop-filter .4s, background .4s;
+    }
+    nav.scrolled {
+      backdrop-filter: blur(16px);
+      background: rgba(9,6,14,.8);
+      border-bottom: 1px solid var(--gb);
+    }
+    .nav-logo {
+      height: 30px; width: auto;
+      filter: invert(1); mix-blend-mode: screen;
+      opacity: .9;
+    }
+    .nav-links {
+      display: flex; gap: 36px; list-style: none;
+    }
+    .nav-links a {
+      font-size: 11px; font-weight: 500; letter-spacing: 3px;
+      text-transform: uppercase; color: rgba(240,236,228,.45);
+      text-decoration: none; transition: color .25s;
+    }
+    .nav-links a:hover { color: var(--text); }
+    @media (max-width: 600px) { .nav-links { display: none; } nav { padding: 18px 24px; } }
+
+    /* ─── HERO ─── */
+    #hero {
+      position: relative; height: 100svh; min-height: 640px;
+      display: grid; grid-template-columns: 1fr 1fr;
+      overflow: hidden;
+    }
+    @media (max-width: 860px) {
+      #hero { grid-template-columns: 1fr; grid-template-rows: auto 1fr; }
+    }
+
+    /* Ambient blobs */
+    #hero::before {
+      content: ''; position: absolute;
+      width: 600px; height: 600px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(176,48,184,.18) 0%, transparent 70%);
+      top: -100px; left: -100px;
+      animation: blobDrift 18s ease-in-out infinite alternate;
+      pointer-events: none;
+    }
+    #hero::after {
+      content: ''; position: absolute;
+      width: 500px; height: 500px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(124,34,200,.12) 0%, transparent 70%);
+      bottom: 0; left: 30%;
+      animation: blobDrift 24s ease-in-out infinite alternate-reverse;
+      pointer-events: none;
+    }
+    @keyframes blobDrift {
+      0%   { transform: translate(0,0) scale(1);     }
+      100% { transform: translate(80px,60px) scale(1.2); }
+    }
+
+    .hero-left {
+      position: relative; z-index: 10;
+      display: flex; flex-direction: column;
+      justify-content: center; padding: 0 56px 0 72px;
+    }
+    @media (max-width: 860px) { .hero-left { padding: 120px 28px 48px; align-items: center; text-align: center; } }
+
+    .hero-logo {
+      width: clamp(180px, 28vw, 340px); height: auto;
+      margin-bottom: 36px;
+      filter: invert(1); mix-blend-mode: screen;
+      opacity: 0; transform: translateY(20px);
+      animation: up .8s .2s cubic-bezier(.16,1,.3,1) forwards;
+    }
+
+    .hero-tagline {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(36px, 5vw, 62px);
+      line-height: 1.05; letter-spacing: 1.5px;
+      color: rgba(240,236,228,.75);
+      margin-bottom: 40px;
+      opacity: 0; transform: translateY(20px);
+      animation: up .8s .45s cubic-bezier(.16,1,.3,1) forwards;
+    }
+    .hero-tagline em { font-style: normal; color: var(--text); }
+
+    .hero-cta {
+      display: flex; flex-wrap: wrap; gap: 14px;
+      opacity: 0; transform: translateY(16px);
+      animation: up .8s .65s cubic-bezier(.16,1,.3,1) forwards;
+    }
+    @media (max-width: 860px) { .hero-cta { justify-content: center; } }
+
+    .btn-primary {
+      display: inline-flex; align-items: center; gap: 10px;
+      padding: 15px 38px;
+      background: var(--accent); color: #fff;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 11px; font-weight: 600; letter-spacing: 4px;
+      text-transform: uppercase; text-decoration: none; border: none;
+      cursor: pointer; position: relative; overflow: hidden;
+      transition: transform .2s, box-shadow .35s;
+    }
+    .btn-primary::before {
+      content: ''; position: absolute; inset: 0;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,.18), transparent);
+      transform: translateX(-100%); transition: transform .5s;
+    }
+    .btn-primary:hover::before { transform: translateX(100%); }
+    .btn-primary:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 0 50px var(--glow), 0 10px 30px rgba(176,48,184,.25);
+    }
+
+    .btn-ghost {
+      display: inline-flex; align-items: center; gap: 10px;
+      padding: 14px 36px;
+      border: 1px solid var(--gb); background: var(--glass);
+      color: var(--text);
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 11px; font-weight: 500; letter-spacing: 4px;
+      text-transform: uppercase; text-decoration: none;
+      backdrop-filter: blur(10px);
+      transition: border-color .3s, box-shadow .35s, color .3s;
+    }
+    .btn-ghost:hover {
+      border-color: var(--accent); color: var(--accent);
+      box-shadow: 0 0 30px var(--glow);
+    }
+
+    /* Hero right — cover illustration */
+    .hero-right {
+      position: relative; overflow: hidden;
+    }
+    @media (max-width: 860px) {
+      .hero-right {
+        height: 45vw; min-height: 200px; max-height: 350px;
+        order: -1;
+      }
+    }
+
+    .hero-cover {
+      width: 100%; height: 100%;
+      object-fit: cover; object-position: top center;
+      display: block;
+    }
+
+    /* gradient fade: left edge blends into dark bg */
+    .hero-right::before {
+      content: ''; position: absolute; inset: 0; z-index: 2;
+      background: linear-gradient(to right, var(--bg) 0%, transparent 35%),
+                  linear-gradient(to top, var(--bg) 0%, transparent 25%);
+    }
+
+    .scroll-hint {
+      position: absolute; bottom: 32px; left: 50%; transform: translateX(-50%);
+      z-index: 20; opacity: 0; animation: fadeIn 1s 1.6s forwards;
+    }
+    .scroll-hint span {
+      display: block; width: 1px; height: 50px; margin: 0 auto;
+      background: linear-gradient(to bottom, var(--accent), transparent);
+      animation: scrollPulse 2.4s ease-in-out infinite;
+    }
+    @keyframes scrollPulse {
+      0%,100%{ opacity:.25; } 50%{ opacity:1; }
+    }
+
+    /* ─── SECTION BASE ─── */
+    .section-wrap { max-width: 1080px; margin: 0 auto; padding: 0 40px; }
+    @media (max-width: 600px) { .section-wrap { padding: 0 24px; } }
+
+    .section-label {
+      font-size: 10px; font-weight: 600; letter-spacing: 6px;
+      text-transform: uppercase; color: var(--accent); margin-bottom: 14px;
+    }
+    .section-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(42px, 6vw, 72px); line-height: .95;
+      margin-bottom: 52px;
+      background: linear-gradient(140deg, #fff 30%, rgba(255,255,255,.4) 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    /* ─── LISTEN SECTION ─── */
+    #listen {
+      padding: 120px 0 100px;
+      border-top: 1px solid var(--gb);
+    }
+
+    .listen-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+    }
+    @media (max-width: 640px) { .listen-grid { grid-template-columns: 1fr; } }
+
+    .pcard {
+      display: flex; align-items: center; gap: 18px;
+      padding: 18px 22px;
+      background: var(--glass); border: 1px solid var(--gb);
+      text-decoration: none; color: var(--text);
+      position: relative; overflow: hidden;
+      transition: border-color .3s, transform .25s, box-shadow .35s;
+      backdrop-filter: blur(12px);
+    }
+    .pcard::before {
+      content: ''; position: absolute;
+      left: 0; top: 0; bottom: 0; width: 3px;
+      background: var(--pc, var(--accent));
+      transform: scaleY(0); transform-origin: bottom;
+      transition: transform .28s cubic-bezier(.16,1,.3,1);
+    }
+    .pcard::after {
+      content: ''; position: absolute; inset: 0;
+      background: linear-gradient(90deg, rgba(var(--pr),0.07) 0%, transparent 55%);
+      opacity: 0; transition: opacity .3s;
+    }
+    .pcard:hover {
+      border-color: rgba(var(--pr),.45);
+      transform: translateX(7px);
+      box-shadow: -5px 0 35px rgba(var(--pr),.13);
+    }
+    .pcard:hover::before { transform: scaleY(1); }
+    .pcard:hover::after  { opacity: 1; }
+
+    .pcard-icon { width: 38px; height: 38px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
+    .pcard-info { flex: 1; position: relative; z-index: 1; }
+    .pcard-name { font-size: 14px; font-weight: 600; letter-spacing: .3px; display: block; }
+    .pcard-desc { font-size: 11px; color: var(--muted); margin-top: 2px; display: block; letter-spacing: .5px; }
+    .pcard-arr  { font-size: 18px; opacity: .2; transition: opacity .3s, transform .3s; position: relative; z-index: 1; }
+    .pcard:hover .pcard-arr { opacity: 1; transform: translateX(6px); }
+
+    .p-spotify { --pc:#1DB954; --pr:29,185,84;   }
+    .p-yandex  { --pc:#FC3F1D; --pr:252,63,29;   }
+    .p-vk      { --pc:#4a76a8; --pr:74,118,168;  }
+    .p-apple   { --pc:#fa243c; --pr:250,36,60;   }
+
+    /* ─── VISUALIZER ─── */
+    #vis {
+      padding: 70px 0;
+      border-top: 1px solid var(--gb);
+      border-bottom: 1px solid var(--gb);
+      text-align: center; position: relative; overflow: hidden;
+    }
+    #vis::before {
+      content: ''; position: absolute; inset: 0;
+      background: radial-gradient(ellipse at 50% 50%, rgba(176,48,184,.05) 0%, transparent 65%);
+    }
+    #vis-bars {
+      display: flex; align-items: flex-end; justify-content: center;
+      gap: 3px; height: 56px; margin: 0 auto 30px;
+      position: relative; z-index: 1;
+    }
+    .vbar {
+      width: 4px; border-radius: 2px 2px 0 0;
+      background: var(--accent); opacity: .65; height: 4px;
+    }
+    .vbar.on {
+      animation: barBounce var(--d,.7s) ease-in-out infinite alternate;
+    }
+    @keyframes barBounce {
+      from { height: 4px; opacity: .3; }
+      to   { height: var(--h,36px); opacity: .95; }
+    }
+    .btn-play {
+      display: inline-flex; align-items: center; gap: 12px;
+      padding: 13px 36px;
+      border: 1px solid var(--gb); background: var(--glass);
+      color: var(--text); font-family: 'Space Grotesk', sans-serif;
+      font-size: 11px; font-weight: 600; letter-spacing: 4px;
+      text-transform: uppercase; cursor: pointer;
+      backdrop-filter: blur(12px); position: relative; z-index: 1;
+      transition: border-color .3s, box-shadow .35s, color .3s;
+    }
+    .btn-play:hover {
+      border-color: var(--accent);
+      box-shadow: 0 0 36px var(--glow);
+      color: var(--accent);
+    }
+    .pdot {
+      width: 7px; height: 7px; background: var(--accent); border-radius: 50%;
+      animation: pdotPulse 1.6s ease-in-out infinite; flex-shrink: 0;
+    }
+    @keyframes pdotPulse {
+      0%,100%{ transform:scale(1); opacity:1;    }
+      50%    { transform:scale(1.8); opacity:.35; }
+    }
+
+    /* ─── ANNOUNCEMENTS ─── */
+    #announce {
+      padding: 120px 0 100px;
+      border-top: 1px solid var(--gb);
+    }
+
+    .announce-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+    }
+    @media (max-width: 860px) { .announce-grid { grid-template-columns: 1fr 1fr; } }
+    @media (max-width: 560px) { .announce-grid { grid-template-columns: 1fr; } }
+
+    .acard {
+      padding: 28px 26px 26px;
+      background: var(--glass); border: 1px solid var(--gb);
+      backdrop-filter: blur(14px);
+      display: flex; flex-direction: column; gap: 14px;
+      position: relative; overflow: hidden;
+      transition: border-color .35s, transform .3s, box-shadow .35s;
+    }
+    .acard::before {
+      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+      background: linear-gradient(90deg, var(--ac-start, var(--accent)), var(--ac-end, var(--accent2)));
+      transform: scaleX(0); transform-origin: left;
+      transition: transform .4s cubic-bezier(.16,1,.3,1);
+    }
+    .acard:hover { border-color: var(--gb2); transform: translateY(-4px); box-shadow: 0 16px 50px rgba(176,48,184,.1); }
+    .acard:hover::before { transform: scaleX(1); }
+
+    .acard-head {
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .acard-type {
+      font-size: 9px; font-weight: 700; letter-spacing: 4px;
+      text-transform: uppercase; padding: 4px 10px;
+      border: 1px solid var(--gb2); color: var(--accent);
+    }
+    .acard-date { font-size: 11px; color: var(--muted); letter-spacing: 1px; }
+
+    .acard-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(22px, 3vw, 32px); letter-spacing: 1px; line-height: 1.05;
+    }
+    .acard-desc {
+      font-size: 13px; color: rgba(240,236,228,.5); line-height: 1.6; flex: 1;
+    }
+    .acard-footer {
+      margin-top: auto; padding-top: 16px;
+      border-top: 1px solid var(--gb);
+      font-size: 11px; letter-spacing: 2px; text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    /* soon pill */
+    .soon-pill {
+      display: inline-block; padding: 3px 10px;
+      background: rgba(176,48,184,.12); border: 1px solid rgba(176,48,184,.25);
+      color: var(--accent); font-size: 9px; font-weight: 700;
+      letter-spacing: 4px; text-transform: uppercase; border-radius: 2px;
+    }
+
+    /* ─── ABOUT ─── */
+    #about {
+      padding: 120px 0;
+      border-top: 1px solid var(--gb);
+      text-align: center;
+    }
+    #about .section-wrap { max-width: 720px; }
+
+    .about-text {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(34px, 5vw, 62px);
+      line-height: 1.08; letter-spacing: 1.5px;
+      color: rgba(240,236,228,.8);
+    }
+    .about-text em { font-style: normal; color: var(--accent); }
+
+    /* ─── TELEGRAM ─── */
+    #telegram { padding: 60px 0 110px; }
+
+    .tg-card {
+      max-width: 580px; margin: 0 auto;
+      padding: 52px 48px;
+      background: var(--glass); border: 1px solid var(--gb);
+      backdrop-filter: blur(24px); text-align: center;
+      position: relative; overflow: hidden;
+    }
+    .tg-card::before {
+      content: ''; position: absolute; top: 0; left: -100%; right: -100%; height: 1px;
+      background: linear-gradient(90deg, transparent, var(--accent), transparent);
+      animation: scanTop 4s linear infinite;
+    }
+    @keyframes scanTop {
+      0%  { left:-100%; opacity:0; }
+      20% { opacity:1; }
+      80% { opacity:1; }
+      100%{ left:100%;  opacity:0; }
+    }
+    .tg-star  { font-size: 22px; margin-bottom: 18px; display: block; color: var(--accent); opacity:.5; }
+    .tg-badge { font-size: 9px; font-weight: 700; letter-spacing: 6px; text-transform: uppercase; color: var(--accent); margin-bottom: 14px; }
+    .tg-heading {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(28px, 5vw, 44px); letter-spacing: 3px; margin-bottom: 28px;
+    }
+    .tg-list { list-style: none; margin-bottom: 38px; display: inline-block; text-align: left; }
+    .tg-list li {
+      font-size: 13px; color: rgba(240,236,228,.5);
+      padding: 5px 0 5px 22px; position: relative; letter-spacing: .3px;
+    }
+    .tg-list li::before { content: '—'; position: absolute; left: 0; color: var(--accent); }
+    .btn-tg {
+      display: inline-block; padding: 14px 42px;
+      border: 1px solid rgba(240,236,228,.18); background: transparent;
+      color: var(--text); font-family: 'Space Grotesk', sans-serif;
+      font-size: 11px; font-weight: 600; letter-spacing: 4px;
+      text-transform: uppercase; text-decoration: none;
+      transition: border-color .3s, box-shadow .35s, color .3s;
+    }
+    .btn-tg:hover {
+      border-color: var(--accent); color: var(--accent);
+      box-shadow: 0 0 36px var(--glow);
+    }
+
+
+    /* ─── FOOTER ─── */
+    footer {
+      padding: 44px 40px; text-align: center;
+      border-top: 1px solid var(--gb);
+    }
+    .foot-text { font-size: 10px; letter-spacing: 4px; text-transform: uppercase; color: var(--muted); }
+    .foot-text b { color: var(--accent); font-weight: 500; }
+
+    /* ─── SECRET MODAL ─── */
+    #secret {
+      position: fixed; inset: 0; z-index: 9500;
+      background: rgba(9,6,14,.96); backdrop-filter: blur(22px);
+      display: flex; align-items: center; justify-content: center;
+      opacity: 0; pointer-events: none;
+      transition: opacity .5s cubic-bezier(.16,1,.3,1);
+    }
+    #secret.open { opacity: 1; pointer-events: all; }
+    .secret-inner { text-align: center; padding: 40px 28px; }
+    .s-badge { font-size: 10px; letter-spacing: 7px; text-transform: uppercase; color: var(--accent); margin-bottom: 22px; }
+    .s-title { font-family: 'Bebas Neue', sans-serif; font-size: clamp(60px, 10vw, 96px); letter-spacing: 4px; margin-bottom: 14px; }
+    .s-desc { font-size: 14px; color: rgba(240,236,228,.45); max-width: 380px; line-height: 1.7; margin: 0 auto 44px; }
+    .btn-s {
+      display: inline-block; padding: 15px 44px;
+      background: var(--accent); color: #fff;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 11px; font-weight: 600; letter-spacing: 4px;
+      text-transform: uppercase; text-decoration: none; border: none; cursor: pointer;
+      transition: box-shadow .35s, transform .2s;
+    }
+    .btn-s:hover { box-shadow: 0 0 50px var(--glow); transform: translateY(-2px); }
+    .btn-s-close {
+      display: block; margin: 22px auto 0;
+      background: none; border: none; color: var(--muted);
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 10px; letter-spacing: 4px; text-transform: uppercase;
+      cursor: pointer; transition: color .2s;
+    }
+    .btn-s-close:hover { color: var(--text); }
+
+    /* ─── UTILS ─── */
+    @keyframes up     { to { opacity:1; transform:translateY(0); } }
+    @keyframes fadeIn { to { opacity:1; } }
+
+    .reveal {
+      opacity: 0; transform: translateY(32px);
+      transition: opacity .85s cubic-bezier(.16,1,.3,1), transform .85s cubic-bezier(.16,1,.3,1);
+    }
+    .reveal.vis { opacity: 1; transform: translateY(0); }
+  </style>
+</head>
+<body>
+
+<!-- Film grain -->
+<canvas id="grain"></canvas>
+
+<!-- ═══ NAV ═══ -->
+<nav id="nav">
+  <img src="Image/logo_the_cseh.png" alt="TheЦех" class="nav-logo">
+  <ul class="nav-links">
+    <li><a href="#listen">Слушать</a></li>
+    <li><a href="#announce">Анонсы</a></li>
+    <li><a href="#telegram">Telegram</a></li>
+  </ul>
+</nav>
+
+<!-- ═══ HERO ═══ -->
+<section id="hero">
+  <div class="hero-left">
+    <img src="Image/logo_the_cseh.png" alt="TheЦех" class="hero-logo">
+    <h1 class="hero-tagline">
+      <em>Тёмный звук.</em><br>
+      Живые эмоции.<br>
+      Cinematic.
+    </h1>
+    <div class="hero-cta">
+      <a href="#listen" class="btn-primary">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+        Слушать
+      </a>
+      <a href="#announce" class="btn-ghost">Анонсы</a>
+    </div>
+  </div>
+
+  <div class="hero-right">
+    <img src="Image/cover.png" alt="TheЦех" class="hero-cover">
+  </div>
+
+  <div class="scroll-hint"><span></span></div>
+</section>
+
+<!-- ═══ LISTEN ═══ -->
+<section id="listen">
+  <div class="section-wrap">
+    <p class="section-label reveal">Послушать</p>
+    <h2 class="section-title reveal">Мы на платформах</h2>
+
+    <div class="listen-grid">
+      <a href="https://open.spotify.com/artist/7r6u2WMY7E44oOxG2U97S4" class="pcard p-spotify reveal" target="_blank" rel="noopener">
+        <div class="pcard-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="#1DB954"><path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z"/></svg>
+        </div>
+        <div class="pcard-info">
+          <span class="pcard-name">Spotify</span>
+          <span class="pcard-desc">Streaming worldwide</span>
+        </div>
+        <span class="pcard-arr">→</span>
+      </a>
+
+      <a href="https://music.yandex.ru/artist/25900595" class="pcard p-yandex reveal" target="_blank" rel="noopener" style="transition-delay:.05s">
+        <div class="pcard-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="#FC3F1D"><path d="M14.587 5.302H13.03c-2.083 0-3.18 1.046-3.18 2.603 0 1.757.758 2.657 2.288 3.726l1.27.882-3.645 5.185H7.5l3.39-4.828c-1.962-1.39-3.066-2.74-3.066-5.027C7.824 4.913 9.686 3 13.029 3H16.5v14.698H14.59V5.302z"/></svg>
+        </div>
+        <div class="pcard-info">
+          <span class="pcard-name">Яндекс Музыка</span>
+          <span class="pcard-desc">Слушать в России</span>
+        </div>
+        <span class="pcard-arr">→</span>
+      </a>
+
+      <a href="https://vk.com/artist/3702737001960313545" class="pcard p-vk reveal" target="_blank" rel="noopener" style="transition-delay:.1s">
+        <div class="pcard-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="#4a76a8"><path d="M15.684 0H8.316C1.592 0 0 1.592 0 8.316v7.368C0 22.408 1.592 24 8.316 24h7.368C22.408 24 24 22.408 24 15.684V8.316C24 1.592 22.408 0 15.684 0zm3.692 17.123h-1.744c-.66 0-.864-.525-2.05-1.727-1.033-1-1.49-1.135-1.744-1.135-.356 0-.458.102-.458.593v1.575c0 .424-.135.678-1.253.678-1.846 0-3.896-1.118-5.335-3.202C4.624 10.857 4.03 8.57 4.03 8.096c0-.254.102-.491.593-.491h1.744c.44 0 .61.203.78.677.863 2.49 2.303 4.675 2.896 4.675.22 0 .322-.102.322-.66V9.721c-.068-1.186-.695-1.287-.695-1.71 0-.204.17-.407.44-.407h2.744c.373 0 .508.203.508.643v3.473c0 .372.17.508.271.508.22 0 .407-.136.813-.542 1.254-1.406 2.151-3.574 2.151-3.574.119-.254.322-.491.762-.491h1.744c.525 0 .644.27.525.643-.22 1.017-2.354 4.031-2.354 4.031-.186.305-.254.44 0 .78.186.254.796.779 1.203 1.253.745.847 1.32 1.558 1.473 2.05.17.49-.085.745-.576.745z"/></svg>
+        </div>
+        <div class="pcard-info">
+          <span class="pcard-name">VK Музыка</span>
+          <span class="pcard-desc">ВКонтакте</span>
+        </div>
+        <span class="pcard-arr">→</span>
+      </a>
+
+      <a href="#" class="pcard p-apple reveal" target="_blank" rel="noopener" style="transition-delay:.15s">
+        <div class="pcard-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="#fa243c"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>
+        </div>
+        <div class="pcard-info">
+          <span class="pcard-name">Apple Music</span>
+          <span class="pcard-desc">Coming soon</span>
+        </div>
+        <span class="pcard-arr">→</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ VISUALIZER ═══ -->
+<section id="vis">
+  <div id="vis-bars"></div>
+  <button class="btn-play" id="btn-play">
+    <span class="pdot"></span>
+    <span id="btn-play-txt">Play Snippet</span>
+  </button>
+</section>
+
+<!-- ═══ ANNOUNCEMENTS ═══ -->
+<section id="announce">
+  <div class="section-wrap">
+    <p class="section-label reveal">Анонсы</p>
+    <h2 class="section-title reveal">Что будет</h2>
+
+    <div class="announce-grid">
+
+      <!-- КАРТОЧКА 1 — замени на реальный анонс -->
+      <div class="acard reveal">
+        <div class="acard-head">
+          <span class="acard-type">Release</span>
+          <span class="acard-date">Скоро · 2026</span>
+        </div>
+        <h3 class="acard-title">Новый трек</h3>
+        <p class="acard-desc">
+          Следите за обновлениями. Что-то тёмное уже в работе.
+        </p>
+        <div class="acard-footer">
+          <span class="soon-pill">Soon</span>
+        </div>
+      </div>
+
+      <!-- КАРТОЧКА 2 — замени на реальный анонс -->
+      <div class="acard reveal" style="transition-delay:.1s">
+        <div class="acard-head">
+          <span class="acard-type">EP</span>
+          <span class="acard-date">2026</span>
+        </div>
+        <h3 class="acard-title">Мини-альбом</h3>
+        <p class="acard-desc">
+          Первый сборник треков от TheЦех. В процессе записи.
+        </p>
+        <div class="acard-footer">
+          <span class="soon-pill">In Progress</span>
+        </div>
+      </div>
+
+      <!-- КАРТОЧКА 3 — замени на реальный анонс -->
+      <div class="acard reveal" style="transition-delay:.2s">
+        <div class="acard-head">
+          <span class="acard-type">Event</span>
+          <span class="acard-date">TBA · 2026</span>
+        </div>
+        <h3 class="acard-title">Живое выступление</h3>
+        <p class="acard-desc">
+          Первое живое выступление. Дата и место — в Telegram-канале.
+        </p>
+        <div class="acard-footer">
+          <a href="https://t.me/the_tseh_official" style="color:var(--accent);font-size:11px;letter-spacing:2px;text-transform:uppercase;text-decoration:none;" target="_blank">→ Telegram</a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ═══ ABOUT ═══ -->
+<section id="about">
+  <div class="section-wrap">
+    <p class="about-text reveal">
+      Тёмный звук.<br>
+      Живые эмоции.<br>
+      <em>Cinematic atmosphere.</em>
+    </p>
+  </div>
+</section>
+
+<!-- ═══ TELEGRAM ═══ -->
+<section id="telegram">
+  <div class="section-wrap">
+    <div class="tg-card reveal">
+      <span class="tg-star">✦</span>
+      <p class="tg-badge">Private Zone</p>
+      <h3 class="tg-heading">Telegram Fan Zone</h3>
+      <ul class="tg-list">
+        <li>Unreleased demos</li>
+        <li>Backstage footage</li>
+        <li>Exclusive drops</li>
+        <li>Snippets before release</li>
+        <li>Анонсы первым</li>
+      </ul>
+      <a href="https://t.me/the_tseh_official" class="btn-tg" target="_blank" rel="noopener">
+        Войти в канал
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ FOOTER ═══ -->
+<footer>
+  <p class="foot-text">© 2026 <b>postaralis</b> · TheЦех · All rights reserved</p>
+</footer>
+
+<!-- ═══ SECRET MODAL (5 кликов по лого в герое) ═══ -->
+<div id="secret">
+  <div class="secret-inner">
+    <p class="s-badge">☆ &nbsp; Hidden &nbsp; ☆</p>
+    <h2 class="s-title">СЕКРЕТ</h2>
+    <p class="s-desc">
+      Ты нашёл то, что не для всех.<br>
+      Эксклюзив только для настоящих.
+    </p>
+    <!-- Замени # на ссылку на hidden track -->
+    <a href="#" class="btn-s" target="_blank" rel="noopener">Listen</a>
+    <button class="btn-s-close" id="btn-s-close">← Назад</button>
+  </div>
+</div>
+
+<!-- ═══ SCRIPTS ═══ -->
+<script>
+/* ── Grain ── */
+(function () {
+  const c = document.getElementById('grain');
+  const cx = c.getContext('2d');
+  let w, h, last = 0;
+  function resize() { w = c.width = innerWidth; h = c.height = innerHeight; }
+  window.addEventListener('resize', resize);
+  resize();
+  function draw(ts) {
+    requestAnimationFrame(draw);
+    if (ts - last < 50) return;
+    last = ts;
+    const d = cx.createImageData(w, h);
+    const b = d.data;
+    for (let i = 0; i < b.length; i += 4) {
+      const v = Math.random() * 255 | 0;
+      b[i] = b[i+1] = b[i+2] = v; b[i+3] = 255;
+    }
+    cx.putImageData(d, 0, 0);
+  }
+  requestAnimationFrame(draw);
+})();
+
+/* ── Nav scroll state ── */
+(function () {
+  const nav = document.getElementById('nav');
+  window.addEventListener('scroll', () => {
+    nav.classList.toggle('scrolled', scrollY > 60);
+  }, { passive: true });
+})();
+
+/* ── Visualizer bars ── */
+(function () {
+  const wrap = document.getElementById('vis-bars');
+  const N = 44;
+  const bars = [];
+  for (let i = 0; i < N; i++) {
+    const b = document.createElement('div');
+    b.className = 'vbar';
+    const hh = (Math.abs(Math.sin(i * 0.38 + 1)) * 30 + Math.random() * 20 + 6) | 0;
+    b.style.setProperty('--h', hh + 'px');
+    b.style.setProperty('--d', (.32 + Math.random() * .6).toFixed(2) + 's');
+    wrap.appendChild(b); bars.push(b);
+  }
+  let on = false;
+  document.getElementById('btn-play').addEventListener('click', () => {
+    on = !on;
+    bars.forEach(b => {
+      if (on) { b.style.animationDelay = (Math.random() * .45).toFixed(2) + 's'; b.classList.add('on'); }
+      else     { b.classList.remove('on'); b.style.height = '4px'; }
+    });
+    document.getElementById('btn-play-txt').textContent = on ? 'Pause' : 'Play Snippet';
+  });
+})();
+
+/* ── Secret: 5 clicks on hero logo ── */
+(function () {
+  const logo   = document.querySelector('.hero-logo');
+  const modal  = document.getElementById('secret');
+  const close  = document.getElementById('btn-s-close');
+  let n = 0, timer;
+  logo.addEventListener('click', () => {
+    clearTimeout(timer);
+    if (++n >= 5) {
+      n = 0; modal.classList.add('open'); return;
+    }
+    timer = setTimeout(() => { n = 0; }, 2200);
+  });
+  close.addEventListener('click', () => modal.classList.remove('open'));
+  modal.addEventListener('click', e => { if (e.target === modal) modal.classList.remove('open'); });
+})();
+
+/* ── Scroll reveal ── */
+(function () {
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('vis'); io.unobserve(e.target); } });
+  }, { threshold: .12 });
+  document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+})();
+
+</script>
+</body>
+</html>
