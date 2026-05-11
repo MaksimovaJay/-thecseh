@@ -83,7 +83,39 @@
       overflow: hidden;
     }
     @media (max-width: 860px) {
-      #hero { grid-template-columns: 1fr; grid-template-rows: auto 1fr; }
+      #hero {
+        display: flex;
+        flex-direction: column;
+        height: auto; min-height: 100svh;
+      }
+      /* image first, full width, tall */
+      .hero-right {
+        order: -1;
+        position: relative;
+        width: 100%; height: 65svh;
+        flex-shrink: 0;
+      }
+      .hero-right::before {
+        background: linear-gradient(to bottom, transparent 55%, var(--bg) 100%);
+      }
+      .hero-cover { object-position: center 18%; }
+
+      /* play button centered on the image */
+      .hero-play-wrap { z-index: 10; }
+
+      /* text block below, no absolute nonsense */
+      .hero-left {
+        position: relative; z-index: 5;
+        display: flex; flex-direction: column;
+        align-items: center; text-align: center;
+        padding: 0 28px 60px;
+        margin-top: -48px; /* slight overlap with image gradient */
+        flex: 1;
+      }
+      .hero-logo { width: clamp(130px, 42vw, 200px); margin-bottom: 18px; }
+      .hero-tagline { font-size: clamp(26px, 7vw, 38px); margin-bottom: 24px; }
+      .hero-cta { justify-content: center; flex-direction: column; align-items: center; }
+      .btn-ghost { display: none; } /* убираем "Анонсы" на мобиле — меньше кнопок */
     }
 
     /* Ambient blobs */
@@ -183,12 +215,6 @@
     /* Hero right — cover illustration */
     .hero-right {
       position: relative; overflow: hidden;
-    }
-    @media (max-width: 860px) {
-      .hero-right {
-        height: 45vw; min-height: 200px; max-height: 350px;
-        order: -1;
-      }
     }
 
     .hero-cover {
