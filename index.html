@@ -193,7 +193,7 @@
 
     .hero-cover {
       width: 100%; height: 100%;
-      object-fit: cover; object-position: top center;
+      object-fit: cover; object-position: center 30%;
       display: block;
     }
 
@@ -203,6 +203,31 @@
       background: linear-gradient(to right, var(--bg) 0%, transparent 35%),
                   linear-gradient(to top, var(--bg) 0%, transparent 25%);
     }
+
+    /* play button on cover */
+    .hero-play-wrap {
+      position: absolute; inset: 0; z-index: 10;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .hero-play-btn {
+      width: 76px; height: 76px; border-radius: 50%;
+      background: rgba(255,255,255,0.08);
+      border: 2px solid rgba(255,255,255,0.55);
+      backdrop-filter: blur(6px);
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      transition: background .3s, border-color .3s, transform .25s, box-shadow .35s;
+    }
+    .hero-play-btn:hover {
+      background: rgba(255,255,255,0.16);
+      border-color: rgba(255,255,255,.9);
+      transform: scale(1.1);
+      box-shadow: 0 0 50px var(--glow);
+    }
+    .hero-play-btn svg { fill: #fff; width: 30px; height: 30px; }
+    .hero-play-btn .icon-pause { display: none; }
+    .hero-play-btn.playing .icon-play  { display: none; }
+    .hero-play-btn.playing .icon-pause { display: block; }
 
     .scroll-hint {
       position: absolute; bottom: 32px; left: 50%; transform: translateX(-50%);
@@ -288,55 +313,53 @@
     .p-vk      { --pc:#4a76a8; --pr:74,118,168;  }
     .p-apple   { --pc:#fa243c; --pr:250,36,60;   }
 
-    /* ─── VISUALIZER ─── */
-    #vis {
-      padding: 70px 0;
-      border-top: 1px solid var(--gb);
+    /* ─── PLAYER BAR ─── */
+    #player-section {
       border-bottom: 1px solid var(--gb);
-      text-align: center; position: relative; overflow: hidden;
     }
-    #vis::before {
-      content: ''; position: absolute; inset: 0;
-      background: radial-gradient(ellipse at 50% 50%, rgba(176,48,184,.05) 0%, transparent 65%);
+    .player-bar-wrap {
+      max-width: 1080px; margin: 0 auto;
+      padding: 18px 48px 20px;
     }
-    #vis-bars {
-      display: flex; align-items: flex-end; justify-content: center;
-      gap: 3px; height: 56px; margin: 0 auto 30px;
-      position: relative; z-index: 1;
+    @media (max-width: 600px) { .player-bar-wrap { padding: 14px 24px 16px; } }
+
+    .player-bar-head {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 10px;
     }
-    .vbar {
-      width: 4px; border-radius: 2px 2px 0 0;
-      background: var(--accent); opacity: .65; height: 4px;
+    .player-label {
+      font-size: 10px; font-weight: 600; letter-spacing: 4px;
+      text-transform: uppercase; color: var(--accent);
     }
-    .vbar.on {
-      animation: barBounce var(--d,.7s) ease-in-out infinite alternate;
+    .player-times {
+      font-size: 11px; color: var(--muted);
+      font-variant-numeric: tabular-nums; letter-spacing: 1px;
+      display: flex; gap: 4px;
     }
+    .slash { opacity: .3; }
+
+    .progress-wrap {
+      height: 3px; background: rgba(255,255,255,.08);
+      cursor: pointer; position: relative;
+    }
+    .progress-fill {
+      height: 100%; background: var(--accent); width: 0%;
+      transition: width .1s linear; pointer-events: none;
+    }
+    .progress-wrap:hover .progress-fill { background: #fff; }
+
+    .player-vis {
+      display: flex; align-items: flex-end; gap: 3px;
+      height: 24px; margin-top: 12px;
+    }
+    .pv-bar {
+      width: 3px; border-radius: 2px 2px 0 0;
+      background: var(--accent); height: 3px; opacity: .45;
+    }
+    .pv-bar.on { animation: barBounce var(--d,.7s) ease-in-out infinite alternate; }
     @keyframes barBounce {
-      from { height: 4px; opacity: .3; }
-      to   { height: var(--h,36px); opacity: .95; }
-    }
-    .btn-play {
-      display: inline-flex; align-items: center; gap: 12px;
-      padding: 13px 36px;
-      border: 1px solid var(--gb); background: var(--glass);
-      color: var(--text); font-family: 'Space Grotesk', sans-serif;
-      font-size: 11px; font-weight: 600; letter-spacing: 4px;
-      text-transform: uppercase; cursor: pointer;
-      backdrop-filter: blur(12px); position: relative; z-index: 1;
-      transition: border-color .3s, box-shadow .35s, color .3s;
-    }
-    .btn-play:hover {
-      border-color: var(--accent);
-      box-shadow: 0 0 36px var(--glow);
-      color: var(--accent);
-    }
-    .pdot {
-      width: 7px; height: 7px; background: var(--accent); border-radius: 50%;
-      animation: pdotPulse 1.6s ease-in-out infinite; flex-shrink: 0;
-    }
-    @keyframes pdotPulse {
-      0%,100%{ transform:scale(1); opacity:1;    }
-      50%    { transform:scale(1.8); opacity:.35; }
+      from { height: 3px; opacity: .2; }
+      to   { height: var(--h,18px); opacity: .8; }
     }
 
     /* ─── ANNOUNCEMENTS ─── */
@@ -504,26 +527,6 @@
     }
     .btn-s-close:hover { color: var(--text); }
 
-    /* ─── SOUND BUTTON ─── */
-    #sound-btn {
-      position: fixed; bottom: 28px; right: 28px; z-index: 8000;
-      width: 44px; height: 44px;
-      background: var(--glass); border: 1px solid var(--gb);
-      backdrop-filter: blur(14px);
-      display: flex; align-items: center; justify-content: center;
-      cursor: pointer; transition: border-color .3s, box-shadow .3s;
-      opacity: 0; animation: fadeIn 1s 2s forwards;
-    }
-    #sound-btn:hover {
-      border-color: var(--accent);
-      box-shadow: 0 0 24px var(--glow);
-    }
-    #sound-btn svg { width: 18px; height: 18px; fill: rgba(240,236,228,.6); transition: fill .25s; }
-    #sound-btn:hover svg { fill: var(--text); }
-    #sound-btn.muted svg.icon-on  { display: none;  }
-    #sound-btn.muted svg.icon-off { display: block; }
-    #sound-btn:not(.muted) svg.icon-on  { display: block; }
-    #sound-btn:not(.muted) svg.icon-off { display: none;  }
 
     /* ─── UTILS ─── */
     @keyframes up     { to { opacity:1; transform:translateY(0); } }
@@ -541,20 +544,7 @@
 <!-- Film grain -->
 <canvas id="grain"></canvas>
 
-<!-- Background audio -->
-<audio id="bg-audio" src="musik/theme.mp3" loop preload="auto"></audio>
-
-<!-- Sound toggle -->
-<button id="sound-btn" class="muted" aria-label="Toggle sound">
-  <!-- sound on -->
-  <svg class="icon-on" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-    <path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/>
-  </svg>
-  <!-- sound off -->
-  <svg class="icon-off" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-    <path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06c1.38-.31 2.63-.95 3.69-1.81L19.73 21 21 19.73l-9-9L4.27 3zM12 4L9.91 6.09 12 8.18V4z"/>
-  </svg>
-</button>
+<audio id="player-audio" src="musik/theme.mp3" preload="auto"></audio>
 
 <!-- ═══ NAV ═══ -->
 <nav id="nav">
@@ -586,6 +576,12 @@
 
   <div class="hero-right">
     <img src="Image/cover.png" alt="TheЦех" class="hero-cover">
+    <div class="hero-play-wrap">
+      <button class="hero-play-btn" id="play-btn" aria-label="Play / Pause">
+        <svg class="icon-play" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+        <svg class="icon-pause" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
+      </button>
+    </div>
   </div>
 
   <div class="scroll-hint"><span></span></div>
@@ -615,7 +611,7 @@
         </div>
         <div class="pcard-info">
           <span class="pcard-name">Яндекс Музыка</span>
-          <span class="pcard-desc">Слушать в России</span>
+          <span class="pcard-desc">Слушать на Яндекс</span>
         </div>
         <span class="pcard-arr">→</span>
       </a>
@@ -645,13 +641,22 @@
   </div>
 </section>
 
-<!-- ═══ VISUALIZER ═══ -->
-<section id="vis">
-  <div id="vis-bars"></div>
-  <button class="btn-play" id="btn-play">
-    <span class="pdot"></span>
-    <span id="btn-play-txt">Play Snippet</span>
-  </button>
+<!-- ═══ PLAYER PROGRESS ═══ -->
+<section id="player-section">
+  <div class="player-bar-wrap">
+    <div class="player-bar-head">
+      <span class="player-label">TheЦех — postaralis</span>
+      <div class="player-times">
+        <span id="time-cur">0:00</span>
+        <span class="slash">/</span>
+        <span id="time-dur">—</span>
+      </div>
+    </div>
+    <div class="progress-wrap" id="progress-wrap">
+      <div class="progress-fill" id="progress-fill"></div>
+    </div>
+    <div class="player-vis" id="player-vis"></div>
+  </div>
 </section>
 
 <!-- ═══ ANNOUNCEMENTS ═══ -->
@@ -727,14 +732,14 @@
   <div class="section-wrap">
     <div class="tg-card reveal">
       <span class="tg-star">✦</span>
-      <p class="tg-badge">Private Zone</p>
+      <p class="tg-badge">Закрытая зона</p>
       <h3 class="tg-heading">Telegram Fan Zone</h3>
       <ul class="tg-list">
-        <li>Unreleased demos</li>
-        <li>Backstage footage</li>
-        <li>Exclusive drops</li>
-        <li>Snippets before release</li>
-        <li>Анонсы первым</li>
+        <li>Треки до релиза</li>
+        <li>Бэкстейдж и съёмки</li>
+        <li>Эксклюзивные дропы</li>
+        <li>Сниппеты первым</li>
+        <li>Анонсы раньше всех</li>
       </ul>
       <a href="https://t.me/the_tseh_official" class="btn-tg" target="_blank" rel="noopener">
         Войти в канал
@@ -796,27 +801,63 @@
   }, { passive: true });
 })();
 
-/* ── Visualizer bars ── */
+/* ── Player ── */
 (function () {
-  const wrap = document.getElementById('vis-bars');
-  const N = 44;
+  const audio   = document.getElementById('player-audio');
+  const btn     = document.getElementById('play-btn');
+  const fill    = document.getElementById('progress-fill');
+  const wrap    = document.getElementById('progress-wrap');
+  const timeCur = document.getElementById('time-cur');
+  const timeDur = document.getElementById('time-dur');
+  const visWrap = document.getElementById('player-vis');
+
   const bars = [];
-  for (let i = 0; i < N; i++) {
+  for (let i = 0; i < 28; i++) {
     const b = document.createElement('div');
-    b.className = 'vbar';
-    const hh = (Math.abs(Math.sin(i * 0.38 + 1)) * 30 + Math.random() * 20 + 6) | 0;
-    b.style.setProperty('--h', hh + 'px');
-    b.style.setProperty('--d', (.32 + Math.random() * .6).toFixed(2) + 's');
-    wrap.appendChild(b); bars.push(b);
+    b.className = 'pv-bar';
+    const h = (Math.abs(Math.sin(i * 0.45 + 0.8)) * 16 + Math.random() * 8 + 4) | 0;
+    b.style.setProperty('--h', h + 'px');
+    b.style.setProperty('--d', (.3 + Math.random() * .55).toFixed(2) + 's');
+    visWrap.appendChild(b); bars.push(b);
   }
-  let on = false;
-  document.getElementById('btn-play').addEventListener('click', () => {
-    on = !on;
+
+  function fmt(s) {
+    return Math.floor(s / 60) + ':' + String(Math.floor(s % 60)).padStart(2, '0');
+  }
+
+  function setBars(on) {
     bars.forEach(b => {
-      if (on) { b.style.animationDelay = (Math.random() * .45).toFixed(2) + 's'; b.classList.add('on'); }
-      else     { b.classList.remove('on'); b.style.height = '4px'; }
+      if (on) { b.style.animationDelay = (Math.random() * .4).toFixed(2) + 's'; b.classList.add('on'); }
+      else    { b.classList.remove('on'); }
     });
-    document.getElementById('btn-play-txt').textContent = on ? 'Pause' : 'Play Snippet';
+  }
+
+  btn.addEventListener('click', () => {
+    if (audio.paused) {
+      audio.play().then(() => { btn.classList.add('playing'); setBars(true); }).catch(() => {});
+    } else {
+      audio.pause();
+      btn.classList.remove('playing');
+      setBars(false);
+    }
+  });
+
+  audio.addEventListener('timeupdate', () => {
+    if (!audio.duration) return;
+    fill.style.width = (audio.currentTime / audio.duration * 100) + '%';
+    timeCur.textContent = fmt(audio.currentTime);
+  });
+
+  audio.addEventListener('loadedmetadata', () => { timeDur.textContent = fmt(audio.duration); });
+
+  audio.addEventListener('ended', () => {
+    btn.classList.remove('playing'); setBars(false);
+    fill.style.width = '0%'; timeCur.textContent = '0:00';
+  });
+
+  wrap.addEventListener('click', (e) => {
+    if (!audio.duration) return;
+    audio.currentTime = ((e.clientX - wrap.getBoundingClientRect().left) / wrap.offsetWidth) * audio.duration;
   });
 })();
 
@@ -837,40 +878,6 @@
   modal.addEventListener('click', e => { if (e.target === modal) modal.classList.remove('open'); });
 })();
 
-/* ── Background audio ── */
-(function () {
-  const audio = document.getElementById('bg-audio');
-  const btn   = document.getElementById('sound-btn');
-  let started = false;
-
-  audio.volume = 0.18;
-
-  function start() {
-    if (started) return;
-    started = true;
-    audio.play().then(() => {
-      btn.classList.remove('muted');
-    }).catch(() => {});
-  }
-
-  /* запускаем при первом касании страницы */
-  ['click','touchstart','keydown'].forEach(ev =>
-    document.addEventListener(ev, start, { once: true, passive: true })
-  );
-
-  /* кнопка mute/unmute */
-  btn.addEventListener('click', (e) => {
-    e.stopPropagation();
-    if (!started) { start(); return; }
-    if (audio.paused) {
-      audio.play();
-      btn.classList.remove('muted');
-    } else {
-      audio.pause();
-      btn.classList.add('muted');
-    }
-  });
-})();
 
 /* ── Scroll reveal ── */
 (function () {
